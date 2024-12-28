@@ -10,6 +10,33 @@ const passwordError = document.querySelector(".password-error");
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+function validatePassword(password) {
+    const minLength = 8;
+    const hasUpperCase = /[A-Z]/.test(password);
+    const hasLowerCase = /[a-z]/.test(password);
+    const hasDigit = /\d/.test(password);
+    const hasSpecialChar = /[!@#$%^&*]/.test(password);
+
+    if (password.length < minLength) {
+        return { valid: false, message: `Password must be at least ${minLength} characters long.` };
+    }
+    if (!hasUpperCase) {
+        return { valid: false, message: "Password must contain at least one uppercase letter." };
+    }
+    if (!hasLowerCase) {
+        return { valid: false, message: "Password must contain at least one lowercase letter." };
+    }
+    if (!hasDigit) {
+        return { valid: false, message: "Password must contain at least one digit." };
+    }
+    if (!hasSpecialChar) {
+        return { valid: false, message: "Password must contain at least one special character." };
+    }
+
+    return { valid: true }; 
+}
+
+
 
 function validateInput(input, errorElement, isEmail = false) {
     if (!input.value) {
@@ -37,7 +64,20 @@ claim.addEventListener("click", (e) => {
     const isEmailValid = validateInput(email, emailError, true);
     const isPasswordValid = validateInput(password, passwordError);
 
-    // Check if all fields are valid
+    const passwordValue = password.value;
+    const passwordValidationResult = validatePassword(passwordValue);
+    
+    if (!passwordValidationResult.valid) {
+        password.classList.add("with-icon");
+        passwordError.textContent = passwordValidationResult.message;
+        passwordError.style.display = "block";
+        return; 
+    } else {
+        password.classList.remove("with-icon");
+        passwordError.style.display = "none";
+    }
+
+
     if (isFnameValid && isLnameValid && isEmailValid && isPasswordValid) {
         claim.value = `Hi ${fname.value}!!`;
     }
